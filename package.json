@@ -2,6 +2,7 @@
   "name": "project-backend",
   "version": "1.0.0",
   "description": "Backend project from Chai-aur-Code",
+
   "keywords": [
     "javascript",
     "backend"
@@ -11,15 +12,6 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.14"
-  },
-  "dependencies": {
-    "dotenv": "^17.3.1",
-    "express": "^5.2.1",
-    "mongoose": "^9.3.0",
-    "prettier": "^3.8.1"
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
   }
 }
