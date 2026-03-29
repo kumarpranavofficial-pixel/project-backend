@@ -2,7 +2,6 @@
   "name": "project-backend",
   "version": "1.0.0",
   "description": "Backend project from Chai-aur-Code",
-
   "keywords": [
     "javascript",
     "backend"
@@ -13,5 +12,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose-aggregate-paginate-v2": "^1.1.4"
   }
 }
