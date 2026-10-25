@@ -31,6 +31,9 @@ router.route("/register").post(
     ]),
     registerUser
 )
+// secure route
+router.route("/refresh-token").get(verifyJWT, refreshAccessToken)
+
 
 router.route("/change-password").post(verifyJWT, changeCurrentPassword)
 
