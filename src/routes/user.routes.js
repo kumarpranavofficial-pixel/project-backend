@@ -8,7 +8,6 @@ import {
     getCurrentUser,
     updateAccountDetails,
     updateUserAvatar,
-    updateUserCoverImage,
     getUserChannelProfile,
     getWatchHistory
  } from "../controllers/user.controller.js";
@@ -31,7 +30,14 @@ router.route("/register").post(
     ]),
     registerUser
 )
+
+router.route("/login").post(loginUser)
+
+
 // secure route
+
+router.route("/logout").get(verifyJWT, logoutUser)
+
 router.route("/refresh-token").get(verifyJWT, refreshAccessToken)
 
 

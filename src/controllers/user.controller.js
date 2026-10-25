@@ -87,6 +87,33 @@ const registerUser = asyncHandler( async (req, res) => {
 }
 )
 
+// logout user -> clear cookies -> reset refresh token
+
+const logoutUser = asyncHandler(async (req, res) => {
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                refreshToken: undefined
+            }
+        },
+        {
+            new: true
+        }
+    )
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+    .status(200)
+    .clearCookie("refreshToken", options)
+    .clearCookie("accessToken", options)
+    .json(new ApiResponse(200, {}, "User logged out successfully"))
+})
+
 // controllers for refresh access token
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
@@ -371,7 +398,6 @@ export
     getCurrentUser,
     updateAccountDetails,
     updateUserAvatar,
-    updateUserCoverImage,
     getUserChannelProfile,
     getWatchHistory,
 
