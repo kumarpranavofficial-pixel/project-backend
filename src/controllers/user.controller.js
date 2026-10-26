@@ -6,7 +6,20 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
 
+const generateAccessAndRefreshToken = async (UserId) => {
+    try{
+        const user = await User.findById(UserId)
+        const accessToken = user.generateAccessToken()
+        const refreshToken = user.generateRefreshToken()
 
+        user.refreshToken = refreshToken
+
+        await user.save ({ validateBeforeSave: false })
+        return { accessToken, refreshToken }
+    } catch (error){
+        throw new ApiError(500, "Error while generating access and refresh token")
+    }
+    }
     
     // get user details from frontend
     // validation - !empty 
@@ -86,6 +99,60 @@ const registerUser = asyncHandler( async (req, res) => {
     )
 }
 )
+
+// login user
+// req body -> data
+// username or email
+// find the user
+// password check
+// access and refresh token
+// send cookie
+
+const loginUser = asyncHandler(async (req, res) => {
+    const { usernameOrEmail, password } = req.body
+
+    if(!usernameOrEmail || !password) {
+        throw new ApiError(400, "username or email is required")
+
+    }
+    const user = await User.findOne({
+        $or : [{ username }, { email }]
+    })
+
+    if(!user){
+        throw new ApiError(404, "User does not exist")
+
+
+    }
+    const isPasswordValid = await user.isPasswordCorrect(password)
+
+    if(!isPasswordValid){
+        throw new ApiError(401, "Invalid credentials")
+    }
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id)
+
+    const LoggedInUser = await User.findById(user._id).select("-password -refreshToken")
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+    
+    return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+        new ApiResponse(
+            200,
+            { user: LoggedInUser, accessToken, refreshToken },
+            "User logged in successfully"
+        )
+    )
+
+})
+
+
 
 // logout user -> clear cookies -> reset refresh token
 
